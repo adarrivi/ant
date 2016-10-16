@@ -20,8 +20,13 @@ public class Position {
         return new Position(x + position.x, y + position.y);
     }
 
-    public Position substract(final Position position) {
+    public Position subtract(final Position position) {
         return new Position(x - position.x, y - position.y);
+    }
+
+    public int distance(final Position position) {
+        final Position subtract = this.subtract(position);
+        return (int) Math.sqrt(subtract.x * subtract.x + subtract.y * subtract.y);
     }
 
     @Override
@@ -36,5 +41,13 @@ public class Position {
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
+    }
+
+    @Override
+    public String toString() {
+        return "Position{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

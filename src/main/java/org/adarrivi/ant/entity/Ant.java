@@ -7,6 +7,7 @@ public class Ant implements Entity {
 
     private final int size;
     private Position position;
+    private double rotation;
 
     public Ant(int size) {
         this.size = size;
