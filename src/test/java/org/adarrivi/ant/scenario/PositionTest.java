@@ -38,6 +38,8 @@ public class PositionTest {
     @DataProvider
     public Object[][] distance() {
         return new Object[][]{
+                {at(0, 0), at(0, 0), 0},
+                {at(12, 15), at(12, 15), 0},
                 {at(0, 0), at(3, 5), 5},
                 {at(0, 0), at(3, 4), 5},
                 {at(3, 5), at(0, 0), 5},
@@ -48,5 +50,20 @@ public class PositionTest {
     @Test(dataProvider = "distance")
     public void distance_ReturnsDistance(Position position1, Position position2, int expected) {
         assertThat(position1.distance(position2), equalTo(expected));
+    }
+
+    @DataProvider
+    public Object[][] move() {
+        return new Object[][]{
+                {at(0, 0), 0d, 5, at(5, 0)},
+                {at(0, 0), Math.PI, 5, at(-5, 0)},
+                {at(0, 0), Math.PI / 2, 5, at(0, 5)},
+                {at(0, 0), 3 * Math.PI / 2, 5, at(0, -5)},
+        };
+    }
+
+    @Test(dataProvider = "move")
+    public void move_MovesTowardsDirection(final Position position, double direction, int distance, final Position expected) {
+        assertThat(position.move(direction, distance), equalTo(expected));
     }
 }

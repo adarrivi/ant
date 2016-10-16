@@ -17,16 +17,26 @@ public class Position {
     }
 
     public Position add(final Position position) {
-        return new Position(x + position.x, y + position.y);
+        return at(x + position.x, y + position.y);
     }
 
     public Position subtract(final Position position) {
-        return new Position(x - position.x, y - position.y);
+        return at(x - position.x, y - position.y);
     }
 
     public int distance(final Position position) {
         final Position subtract = this.subtract(position);
         return (int) Math.sqrt(subtract.x * subtract.x + subtract.y * subtract.y);
+    }
+
+    /**
+     * @param direction direction to get the new position, in radians
+     * @param distance  distance to the new position
+     */
+    public Position move(double direction, int distance) {
+        int nextY = y + (int) (Math.sin(direction) * distance);
+        int nextX = x + (int) (Math.cos(direction) * distance);
+        return at(nextX, nextY);
     }
 
     @Override
