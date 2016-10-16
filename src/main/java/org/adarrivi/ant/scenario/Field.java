@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class Field {
 
-    private Collection<Entity> entities = new ArrayList<>();
+    private Collection<ScenarioEntity> entities = new ArrayList<>();
 
 
 }

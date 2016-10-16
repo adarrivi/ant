@@ -1,6 +1,8 @@
 package org.adarrivi.ant.scenario;
 
-public interface Entity extends Size {
+public interface ScenarioEntity {
 
     Position getPosition();
+
+    int getRadius();
 }
