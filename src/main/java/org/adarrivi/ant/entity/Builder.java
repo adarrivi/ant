@@ -1,4 +1,4 @@
-package org.adarrivi.ant;
+package org.adarrivi.ant.entity;
 
 public interface Builder<T> {
 

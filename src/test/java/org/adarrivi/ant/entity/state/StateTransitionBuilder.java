@@ -1,6 +1,6 @@
 package org.adarrivi.ant.entity.state;
 
-import org.adarrivi.ant.Builder;
+import org.adarrivi.ant.entity.Builder;
 import org.adarrivi.ant.entity.action.Action;
 import org.adarrivi.ant.entity.event.Event;
 
