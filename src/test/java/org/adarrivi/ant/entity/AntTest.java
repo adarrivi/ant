@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static java.util.Arrays.asList;
 import static org.adarrivi.ant.entity.EntityBuilder.*;
 import static org.adarrivi.ant.entity.state.StateBuilder.rummage;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -21,18 +22,12 @@ public class AntTest {
 
     @BeforeMethod
     public void setUp() {
+        victim = givenEmptyAndRummaging();
         visibleEntities = new ArrayList<>();
     }
 
-    @Test
-    public void act_noEntitiesVisible_DoesNotCarryFood() {
-        givenEmptyAndRummaging();
-        whenAct();
-        thenIsNotCarryingFood();
-    }
-
-    private void givenEmptyAndRummaging() {
-        victim = given(ant()
+    private Ant givenEmptyAndRummaging() {
+        return given(ant()
                 .at(Position.at(0, 0))
                 .withInitialState(rummage())
                 .withRandomness(new RandomGenerator(System.currentTimeMillis()))
@@ -48,49 +43,7 @@ public class AntTest {
         assertThat(victim.isCarryingFood(), is(false));
     }
 
-    @Test
-    public void act_EmptyNest_DoesNotCarryFood() {
-        givenEmptyAndRummaging();
-        givenEmptyNest();
-        whenAct();
-        thenIsNotCarryingFood();
-    }
 
-    private boolean givenEmptyNest() {
-        return visibleEntities.add(given(nest()));
-    }
-
-
-    @Test
-    public void act_EmptyAnt_NestWithFoodStored_DoesNotCarryFood() {
-        givenEmptyAndRummaging();
-        givenNestWithFood();
-        whenAct();
-        thenIsNotCarryingFood();
-    }
-
-    private void givenNestWithFood() {
-        final Food food = given(food());
-        final Nest nest = given(nest().storeWith(food));
-        visibleEntities.add(food);
-        visibleEntities.add(nest);
-    }
-
-    @Test
-    public void act_AntCarrying_Food_AntKeepsFood() {
-        final Food foodBeingCarried = givenAntWithFood();
-        givenFood();
-        whenAct();
-        thenAntIsCarrying(foodBeingCarried);
-    }
-
-    private Food givenAntWithFood() {
-        givenEmptyAndRummaging();
-        final Food food = given(food());
-        victim.catchFood(food);
-        visibleEntities.add(food);
-        return food;
-    }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void thenAntIsCarrying(Food expected) {
@@ -98,21 +51,68 @@ public class AntTest {
         assertThat(victim.showCarryingFood().get(), equalTo(expected));
     }
 
-    @Test
-    public void act_EmptyAnt_Food_AntCatchesFood() {
-        givenEmptyAndRummaging();
-        givenFood();
-        whenAct();
-        thenIsCarryingFood();
-    }
-
-    private void givenFood() {
-        visibleEntities.add(given(food()));
-    }
 
     private void thenIsCarryingFood() {
         assertThat(victim.isCarryingFood(), is(true));
     }
 
+    @Test
+    public void isCarryingFood_AntEmpty_Food_PicksUpFood() {
+        visibleEntities.add(given(food()));
+        whenAct();
+        thenIsCarryingFood();
+    }
 
+    @Test
+    public void isCarryingFood_AntEmpty_NestEmptyFood_PicksUpFood() {
+        visibleEntities.add(givenEmptyNest());
+        visibleEntities.add(given(food()));
+        whenAct();
+        thenIsCarryingFood();
+    }
+
+    @Test
+    public void isCarryingFood_AntEmpty_NestWithFoodAndFood_PicksUpFood() {
+        visibleEntities.addAll(givenNestWithFood());
+        visibleEntities.add(given(food()));
+        whenAct();
+        thenIsCarryingFood();
+    }
+
+    private ScenarioEntity givenEmptyNest() {
+        return given(nest());
+    }
+
+    private Collection<ScenarioEntity> givenNestWithFood() {
+        final Nest nest = given(nest());
+        final Food food = given(food());
+        nest.storeFood(food);
+        return asList(nest, food);
+    }
+
+    @Test
+    public void isCarryingFood_AntEmpty_noEntitiesVisible_DoesNotCarryFood() {
+        whenAct();
+        thenIsNotCarryingFood();
+    }
+
+    @Test
+    public void isCarryingFood_AntEmpty_NestWithFood_DoesNotPickUpFood() {
+        visibleEntities.addAll(givenNestWithFood());
+        whenAct();
+        thenIsNotCarryingFood();
+    }
+
+    @Test
+    public void isCarryingFood_AntEmpty_DoesNotPickUpFood() {
+        whenAct();
+        thenIsNotCarryingFood();
+    }
+
+    @Test
+    public void isCarryingFood_AntEmpty_NestEmpty_DoesNotPickUpFood() {
+        visibleEntities.add(givenEmptyNest());
+        whenAct();
+        thenIsNotCarryingFood();
+    }
 }
